@@ -1,0 +1,165 @@
+{
+  "personal_info": {
+    "full_name": "Rustam Durdyyev",
+    "title": "Data Scientist",
+    "location": {
+      "city": "Nürnberg",
+      "country": "Germany"
+    },
+    "email": "rustam.durdyyev@gmail.com",
+    "phone": "+4917687326225",
+    "links": {
+      "linkedin": "www.linkedin.com/in/rustam-durdyyev",
+      "github": "https://github.com/rustamdurdyyev",
+      "website": "https://rustamdurdyyev.github.io/"
+    }
+  },
+
+  "professional_summary": "Data scientist with a strong background in computational science and engineering (Dr.-Ing.). Published scientific articles applying machine learning techniques including probabilistic modelling and clustering. Seeking opportunities to contribute to a dynamic and diverse team by applying advanced data science and ML expertise to deliver significant impact.",
+
+  "experience": [
+    {
+      "role": "Researcher in Computational Science",
+      "organization": "FAU University of Erlangen–Nuremberg",
+      "location": "Erlangen, Germany",
+      "start_date": "2020-10",
+      "end_date": "present",
+      "responsibilities": [
+        "Generated data using first-principles models on GPU-enabled HPC clusters and developed ETL pipelines for large-scale simulation datasets.",
+        "Implemented linear and logarithmic regression to characterize transport patterns in drug discovery applications.",
+        "Developed predictive models using machine learning, statistical methods, and weighted analysis to quantify nanoparticle retention, separation, and adsorption.",
+        "Applied clustering techniques such as k-means and PCA to model ligand conformations, improving simulation accuracy and enabling tunable drug transport."
+      ],
+      "domains": [
+        "Computational Science",
+        "Drug Discovery",
+        "Nanoparticle Transport"
+      ],
+      "methods": [
+        "Regression",
+        "Clustering",
+        "Probabilistic Modeling"
+      ],
+      "tools": [
+        "Python",
+        "HPC",
+        "GPU Computing"
+      ]
+    },
+    {
+      "role": "ML, AI and Data Scientist Trainee",
+      "organization": "DataCamp",
+      "start_date": null,
+      "end_date": null,
+      "responsibilities": [
+        "Completed more than 75 courses covering machine learning, AI, and data science concepts.",
+        "Worked on 25+ real-world projects applying ML and data science techniques to practical problems."
+      ]
+    },
+    {
+      "role": "Researcher and Lecturer",
+      "organization": "Turkmen State University",
+      "location": "Ashgabat, Turkmenistan",
+      "start_date": "2013-09",
+      "end_date": "2020-09",
+      "responsibilities": [
+        "Taught physics courses focused on mathematical modeling, data analysis, and problem-solving.",
+        "Authored a book on physics problem-solving.",
+        "Led a project analysing gas pipeline data using statistical methods to generate insights into reservoir characteristics.",
+	    "Mapped UV detector signals to ozone layer thickness and developed a custom instrument for real-time thickness measurements.",
+	    "Taught physics courses on mathematical modelling and data analysis using real-world data pipeline frameworks.",
+	    "Organised and mentored students for international physics, mathematics, and computer Olympiads, leading to top medals."
+      ]
+    }
+  ],
+
+  "education": [
+    {
+      "degree": "Dr.-Ing. in Chemical and Biological Engineering",
+      "institution": "FAU University of Erlangen–Nuremberg",
+      "location": "Erlangen, Germany",
+      "start_date": "2020-10",
+      "end_date": "present"
+    },
+    {
+      "degree": "Diploma in Radio Physics and Electronics (with Honours)",
+      "institution": "Turkmen State University",
+      "location": "Ashgabat, Turkmenistan",
+      "start_date": "2007-09",
+      "end_date": "2013-06"
+    },
+    {
+      "degree": "Erasmus Exchange Student",
+      "institution": "Technische Universität Berlin",
+      "location": "Berlin, Germany",
+      "start_date": "2011-10",
+      "end_date": "2012-07"
+    }
+  ],
+
+  "technical_skills": {
+    "programming_languages": ["Python","C++", "SQL"],
+    "python_libraries": ["NumPy", "Pandas", "Matplotlib", "Seaborn", "SciPy", "JAX"],
+    "machine_learning": ["scikit-learn", "TensorFlow", "PyTorch", "Keras", "Neural Networks"],
+    "statistical_analysis": ["Statsmodels", "WHAM"],
+    "cloud_and_hpc": ["AWS", "Linux", "SLURM", "HPC (CPU, GPU, TPU)"]
+  },
+
+  "publications": [
+    {
+      "year": 2025,
+      "title": "Shape-Selective Separation of Model Analytes in Normal-Phase Liquid Chromatography: A Combined Simulation-Experimental Study",
+      "authors": ["Durdyyev R.", "Supper M.", "Domagala JC.", "Hantal G.", "Kaspereit M.", "Smith AS."],
+      "journal": "Analytical Chemistry",
+      "doi": "10.1021/acs.analchem.5c01710",
+      "link": "https://cris.fau.de/publications/346413360?lang=en_GB"
+    },
+    {
+      "year": 2025,
+      "title": "NMR spectroscopy and molecular dynamics simulations of xenon adsorbed on supported ionic liquid phase (SILP) material",
+      "authors": ["Tavera-Méndez CL.", "Durdyyev R.", "Agüero-Gamboa P.", "Sen D.", "Hantal G.", "Wisser FM.", "Zhai Z.", "Koller TM.", "Hartmann M.", "Smith AS.", "Wisser D."],
+      "journal": "In preparation"
+    },
+    {
+      "year": 2025,
+      "title": "Consistent classical model development of the functionalized magic gold nanocluster Au25S18: Effect of Oxidation state and substitution length",
+      "authors": ["Durdyyev R.", "Wick C.", "Hantal G.", "Smith AS."],
+      "journal": "In preparation"
+},
+    {
+      "year": 2024,
+      "title": "Assessment of Hydrophilicity/Hydrophobicity in Mesoporous Silica by Combining Adsorption, Liquid Intrusion, and Solid-State NMR Spectroscopy",
+      "authors": ["Collados CC.", "Huber C.", "Söllner J.", "Grass JP.", "Inayat A.", "Durdyyev R.", "Smith AS.", "Wisser D.", "Hartmann M.", "Thommes M."],
+      "journal": "Langmuir",
+      "doi": "10.1021/acs.langmuir.3c03516",
+      "link": "https://cris.fau.de/publications/324534672?lang=en_GB"
+    }
+  ],
+
+  "awards_and_grants": [
+    "DAAD Scholarship for Master Studies in Germany (2020–present) – Fully funded",
+    "15th International Engineering Mechanics Olympiad (2019, Belarus) – Team Leader & Jury",
+    "Letter of Appreciation – Education Ministry of Turkmenistan (2018)",
+    "16th Asian Physics Olympiad (2015, Hangzhou, China) – Team Leader",
+    "International Zhautykov Olympiad (2015, Almaty, Kazakhstan) – Team Leader",
+    "46th International Physics Olympiad (2015, Mumbai, India) – Team Leader",
+    "Young Inventors Project Olympiads (2014, Tbilisi, Georgia) – Team Leader",
+    "Erasmus Mundus Scholarship for Master Studies in Germany (2011) – Fully funded",
+    "National Physics Competition for Higher Education Students – Gold medal (2012), Silver medal (2010, 2009), Gold medal (2008, 2007)",
+    "National Informatics Competition for Higher Education Students (2007) – Bronze medal",
+    "38th International Physics Olympiad (2007, Isfahan, Iran) – Team Leader",
+    "35th International Physics Olympiad (2004, Pohang, Korea) – Honorable Mention",
+    "4th Asian Physics Olympiad (2004, Hanoi, Vietnam) – National Representative",
+    "National Physics Olympiad – Bronze medal (2002, 2003)"
+  ],
+
+  "languages": [
+    {"language": "English", "proficiency": "Advanced"},
+    {"language": "German", "proficiency": "Intermediate"},
+    {"language": "Russian", "proficiency": "Advanced"},
+    {"language": "Turkish", "proficiency": "Advanced"},
+    {"language": "Turkmen", "proficiency": "Native"}
+  ],
+
+  "last_updated": "2026-01-16"
+}
