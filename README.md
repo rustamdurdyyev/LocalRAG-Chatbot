@@ -1,4 +1,4 @@
-# 🤖 Local AI Chatbot with RAG (Ollama + Streamlit)
+## 🤖 Local AI Chatbot with RAG (Ollama + Streamlit)
 
 This project is a local AI chatbot built with Retrieval-Augmented Generation (RAG) using Ollama.
 It allows you to chat with an AI model that answers questions based on your own data (for example, your CV stored in cv.json).
@@ -32,7 +32,7 @@ README.md
 
 --------------------------------------------------
 
-🧰 Setup Requirements
+## 🧰 Setup Requirements
 
 - Python 3.9 or higher
 - Ollama installed locally
