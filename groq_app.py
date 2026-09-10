@@ -25,39 +25,28 @@ def load_streamlit_secret():
         os.environ["GROQ_API_KEY"] = api_key
 
 
-st.set_page_config(page_title="DuRu CV Assistant", layout="centered")
+st.set_page_config(page_title="Ask DuRu", layout="centered")
 
 load_dotenv_file()
 load_streamlit_secret()
 
 items = build_knowledge_items(load_cv())
 
-st.title("DuRu CV Assistant")
-st.caption("Rustam Durdyyev's AI CV and portfolio assistant")
+model = os.getenv("GROQ_MODEL", DEFAULT_MODEL)
+context_limit = int(os.getenv("DURU_CONTEXT_LIMIT", "6"))
+show_context = os.getenv("DURU_SHOW_CONTEXT", "").lower() in {"1", "true", "yes"}
 
-with st.sidebar:
-    st.subheader("Settings")
-    model = st.text_input("Groq model", value=os.getenv("GROQ_MODEL", DEFAULT_MODEL))
-    context_limit = st.slider("Context limit", min_value=3, max_value=12, value=6)
-    show_context = st.toggle("Show selected context", value=False)
-
-    if os.getenv("GROQ_API_KEY"):
-        st.success("Groq API key loaded")
-    else:
-        entered_api_key = st.text_input("Groq API key", type="password")
-        if entered_api_key:
-            os.environ["GROQ_API_KEY"] = entered_api_key.strip()
-            st.success("Groq API key loaded for this session")
-        else:
-            st.warning("Add GROQ_API_KEY in .env, Streamlit secrets, or this field")
+if not os.getenv("GROQ_API_KEY"):
+    st.error("DuRu is not configured yet. Add GROQ_API_KEY to Streamlit secrets.")
+    st.stop()
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
         {
             "role": "assistant",
             "content": (
-                "Hello, I am DuRu, Rustam's personal CV assistant. "
-                "Ask me about his skills, education, publications, experience, projects, or activities."
+                "Hello, I am DuRu, Rustam's personal assistant. "
+                "Ask me about him, his work, research, skills, projects, or publications."
             ),
         }
     ]
