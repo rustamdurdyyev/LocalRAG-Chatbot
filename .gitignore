@@ -1,0 +1,6 @@
+.env
+__pycache__/
+*.pyc
+.streamlit/secrets.toml
+chroma_langchain_db/
+resume.csv~

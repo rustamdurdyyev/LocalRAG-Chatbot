@@ -7,15 +7,15 @@
       "country": "Germany"
     },
     "email": "rustam.durdyyev@gmail.com",
-    "phone": "+4917687326225",
+    "phone": "available_on_request",
     "links": {
-      "linkedin": "www.linkedin.com/in/rustam-durdyyev",
+      "linkedin": "https://www.linkedin.com/in/rustam-durdyyev",
       "github": "https://github.com/rustamdurdyyev",
       "website": "https://rustamdurdyyev.github.io/"
     }
   },
 
-  "professional_summary": "Data scientist with a strong background in computational science and engineering (Dr.-Ing.). Published scientific articles applying machine learning techniques including probabilistic modelling and clustering. Seeking opportunities to contribute to a dynamic and diverse team by applying advanced data science and ML expertise to deliver significant impact.",
+  "professional_summary": "Data scientist with a completed PhD (Dr.-Ing.) in computational physics and data science. Published scientific articles applying machine learning techniques including probabilistic modelling and clustering. Experienced in data-driven simulations, statistical analysis, and scientific machine learning. Seeking opportunities to contribute to a dynamic and diverse team by applying advanced data science and ML expertise to deliver significant impact.",
 
   "experience": [
     {
@@ -49,8 +49,8 @@
     {
       "role": "ML, AI and Data Scientist Trainee",
       "organization": "DataCamp",
-      "start_date": null,
-      "end_date": null,
+      "start_date": "2023",
+      "end_date": "2025",
       "responsibilities": [
         "Completed more than 75 courses covering machine learning, AI, and data science concepts.",
         "Worked on 25+ real-world projects applying ML and data science techniques to practical problems."
@@ -75,11 +75,12 @@
 
   "education": [
     {
-      "degree": "Dr.-Ing. in Chemical and Biological Engineering",
+      "degree": "PhD (Dr.-Ing.) in Computational Physics and Data Science",
       "institution": "FAU University of Erlangen–Nuremberg",
       "location": "Erlangen, Germany",
       "start_date": "2020-10",
-      "end_date": "present"
+      "end_date": "2025",
+      "status": "Completed"
     },
     {
       "degree": "Diploma in Radio Physics and Electronics (with Honours)",
@@ -102,7 +103,8 @@
     "python_libraries": ["NumPy", "Pandas", "Matplotlib", "Seaborn", "SciPy", "JAX"],
     "machine_learning": ["scikit-learn", "TensorFlow", "PyTorch", "Keras", "Neural Networks"],
     "statistical_analysis": ["Statsmodels", "WHAM"],
-    "cloud_and_hpc": ["AWS", "Linux", "SLURM", "HPC (CPU, GPU, TPU)"]
+    "cloud_and_hpc": ["AWS", "Linux", "SLURM", "HPC (CPU, GPU, TPU)"],
+    "simulation_and_molecular_modelling": ["GROMACS", "AMBER", "VASP", "DFT", "VMD", "CREST"]
   },
 
   "publications": [
@@ -159,6 +161,60 @@
     {"language": "Russian", "proficiency": "Advanced"},
     {"language": "Turkish", "proficiency": "Advanced"},
     {"language": "Turkmen", "proficiency": "Native"}
+  ],
+
+  "portfolio_activities": [
+    {
+      "title": "Bookshelf AI",
+      "category": "AI / Computer Vision",
+      "summary": "Built an intelligent book discovery tool that extracts book titles from bookshelf photos using OCR, validates them with Open Library, and recommends new books based on the user's collection.",
+      "technologies": ["Python", "OCR", "PaddleOCR", "Open Library API", "Recommendation System"],
+      "link": "https://github.com/rustamdurdyyev/Bookshelf-AI"
+    },
+    {
+      "title": "Local AI Chatbot with RAG",
+      "category": "AI / RAG",
+      "summary": "Built a local AI chatbot using Ollama, Chroma, vector embeddings, and Streamlit to answer questions from a personal JSON knowledge base.",
+      "technologies": ["Python", "Ollama", "Chroma", "RAG", "Streamlit"],
+      "link": "https://github.com/rustamdurdyyev/LocalRAG-Chatbot"
+    },
+    {
+      "title": "Manchester United Win Predictor",
+      "category": "Sports Analytics",
+      "summary": "Built a football analytics project using historical Premier League data, machine learning, and Monte Carlo simulation to estimate Manchester United win probabilities and streak outcomes.",
+      "technologies": ["Python", "Machine Learning", "Random Forest", "Monte Carlo Simulation", "Sports Analytics"]
+    },
+    {
+      "title": "Machine Learning for Crop Prediction",
+      "category": "Applied Machine Learning",
+      "summary": "Created a crop prediction analysis using soil measurements such as nitrogen, phosphorus, potassium, and pH to identify the most useful feature for predicting optimal crops.",
+      "technologies": ["Python", "Pandas", "scikit-learn", "Logistic Regression", "Feature Importance"]
+    },
+    {
+      "title": "Women's vs Men's Soccer Hypothesis Test",
+      "category": "Statistics / Sports Analytics",
+      "summary": "Performed a statistical hypothesis test comparing goal counts in women's and men's FIFA World Cup matches after 2002.",
+      "technologies": ["Python", "Pandas", "Statistical Testing", "Hypothesis Testing"]
+    },
+    {
+      "title": "Interactive Sudoku Solver",
+      "category": "Algorithms / Visualization",
+      "summary": "Built an interactive Sudoku game and visual solver using Python and Pygame, including hints, validation, and animated backtracking.",
+      "technologies": ["Python", "Pygame", "Backtracking", "Algorithms"],
+      "link": "https://github.com/rustamdurdyyev/sudoku_solver"
+    },
+    {
+      "title": "Science and Technology Blogging",
+      "category": "Science Communication",
+      "summary": "Writes portfolio posts explaining data science, physics, mathematics, AI projects, and personal technical experiments in an accessible way.",
+      "technologies": ["Technical Writing", "Science Communication", "Data Science", "Physics"]
+    },
+    {
+      "title": "Personal Activities",
+      "category": "Personal",
+      "summary": "Enjoys hiking, running, and playing football; also participates in Parkrun activities.",
+      "technologies": []
+    }
   ],
 
   "last_updated": "2026-01-16"

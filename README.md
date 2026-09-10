@@ -1,112 +1,119 @@
-## 🤖 Local AI Chatbot with RAG (Ollama + Streamlit)
+# DuRu CV Assistant
 
-This project is a local AI chatbot built with Retrieval-Augmented Generation (RAG) using Ollama.
-It allows you to chat with an AI model that answers questions based on your own data (for example, your CV stored in cv.json).
+DuRu is a personal AI assistant for Rustam Durdyyev's portfolio. It answers questions about Rustam's CV, education, skills, experience, publications, awards, projects, activities, and languages.
 
-You can run the chatbot:
-- In the terminal (main.py)
-- In a web interface using Streamlit (app.py)
+The project supports two modes:
 
-Everything runs locally on your machine — no external APIs required.
+- Local mode with Ollama and Chroma RAG
+- Groq API mode for a lightweight portfolio demo
 
---------------------------------------------------
+## Features
 
-## ✨ Features
+- CV-based question answering from `cv.json`
+- Portfolio project and activity summaries
+- Terminal chatbot
+- Streamlit web chatbot
+- Local Ollama support
+- Groq API support with `.env` configuration
+- Portfolio-friendly structure
 
-- 100% local AI using Ollama
-- RAG (Retrieval-Augmented Generation) from your own JSON data
-- Terminal-based chatbot
-- Web UI with Streamlit
-- Simple setup and easy to extend
+## Project Structure
 
---------------------------------------------------
+```text
+app.py              Streamlit app using local Ollama
+main.py             Terminal chatbot using local Ollama
+vector.py           Builds the local Chroma vector database
+groq_chat.py        Terminal chatbot using Groq API
+groq_app.py         Streamlit chatbot using Groq API
+cv.json             CV knowledge base
+requirements.txt    Python dependencies
+.env.example        Example environment variables
+```
 
-## 📂 Project Structure
+## Setup
 
-main.py          Terminal chatbot
-vector.py        Vectorizes cv.json (creates embeddings)
-app.py           Streamlit web application
-cv.json          Knowledge base (your data)
-requirements.txt
-README.md
+Create and activate a virtual environment:
 
---------------------------------------------------
-
-## 🧰 Setup Requirements
-
-- Python 3.9 or higher
-- Ollama installed locally
-
---------------------------------------------------
-
-## 🦙 Installing Ollama
-
-Download and install Ollama from:
-https://ollama.com
-
-Pull a model (example):
-
-ollama pull llama3
-
-Start Ollama:
-
-ollama serve
-
-Test it:
-
-ollama run llama3
-
---------------------------------------------------
-
-## 📦 Installing the Project
-
-Clone the repository:
-
-git clone https://github.com/rustamdurdyyev/LocalRAG-Chatbot
-
-(Optional) Create a virtual environment:
-
+```powershell
 python -m venv venv
-source venv/bin/activate    (Windows: venv\Scripts\activate)
+venv\Scripts\activate
+```
 
 Install dependencies:
 
+```powershell
 pip install -r requirements.txt
+```
 
---------------------------------------------------
+## Run Groq Terminal Chat
 
-## 💻 Terminal Mode
+Create a free Groq API key:
 
+```text
+https://console.groq.com/keys
+```
+
+Set the key in PowerShell:
+
+```powershell
+$env:GROQ_API_KEY="your_groq_api_key_here"
+python groq_chat.py
+```
+
+Or create a local `.env` file:
+
+```text
+GROQ_API_KEY=your_groq_api_key_here
+GROQ_MODEL=openai/gpt-oss-20b
+```
+
+Then run:
+
+```powershell
+python groq_chat.py
+```
+
+## Run Groq Web App
+
+```powershell
+streamlit run groq_app.py
+```
+
+## Run Local Ollama Version
+
+Install Ollama:
+
+```text
+https://ollama.com
+```
+
+Pull the required models:
+
+```powershell
+ollama pull llama3.2
+ollama pull mxbai-embed-large
+```
+
+Run the terminal version:
+
+```powershell
 python main.py
+```
 
---------------------------------------------------
+Run the web version:
 
-## 🌐 Streamlit Web App
-
+```powershell
 streamlit run app.py
+```
 
-Then open the link shown in your terminal (usually http://localhost:8501)
+## Portfolio Deployment Note
 
---------------------------------------------------
+Do not put `GROQ_API_KEY` inside frontend code or upload it to GitHub. GitHub Pages is static hosting, so it cannot safely hide API keys.
 
-## 🧠 How RAG Works
+Recommended portfolio setup:
 
-1. Your data (cv.json) is converted into vector embeddings
-2. When a user asks a question, relevant information is retrieved
-3. The retrieved context is sent to Ollama
-4. Ollama generates a grounded, context-aware answer
+```text
+GitHub Pages portfolio -> link to deployed Streamlit app
+```
 
---------------------------------------------------
-
-## 🔄 Customize Your Data
-
-You can replace cv.json with your own data (for example: documents, notes, FAQs).
-After changing the file, rebuild the vectors:
-
-python vector.py
-
---------------------------------------------------
-
-## 📜 License
-
-This project is open-source. Feel free to use, modify, and share.
+Deploy the Streamlit app on a backend-friendly service such as Streamlit Community Cloud, Render, Railway, or Hugging Face Spaces, and store `GROQ_API_KEY` as a secret there.
