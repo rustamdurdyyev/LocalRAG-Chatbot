@@ -130,11 +130,12 @@ if question:
     answer_lower = answer.lower()
     contact_markers = [
         "leave your name",
+        "leave a message",
+        "preferred contact",
         "rustam can contact you",
         "contact rustam",
         "contacted via linkedin",
         "via linkedin",
-        "via email",
     ]
     if any(marker in answer_lower for marker in contact_markers):
         st.session_state.contact_invitation_shown = True

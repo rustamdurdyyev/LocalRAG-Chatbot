@@ -52,10 +52,10 @@ def build_knowledge_items(cv):
     links = personal_info.get("links", {})
 
     contact_lines = [f"Name: {name}"]
-    if personal_info.get("email"):
-        contact_lines.append(f"Email: {personal_info['email']}")
     if links.get("linkedin"):
         contact_lines.append(f"LinkedIn: {links['linkedin']}")
+        contact_lines.append("Preferred contact: LinkedIn")
+    contact_lines.append("Visitor option: leave a message here with name and preferred contact method")
     if links.get("website"):
         contact_lines.append(f"Website: {links['website']}")
     if links.get("github"):
@@ -254,9 +254,9 @@ def ask_groq(question, context, model=None, allow_contact_invitation=True):
     model = model or os.getenv("GROQ_MODEL", DEFAULT_MODEL)
     contact_invitation = (
         "When you are giving a fallback because the detail is not in the CV data, you may add one short contact suggestion: "
-        "Rustam can be contacted via LinkedIn or email, or the visitor can leave their name and email here and Rustam can contact them."
+        "If the visitor wants to learn more about Rustam, they can contact him via LinkedIn or leave a message here with their name and preferred contact method."
         if allow_contact_invitation
-        else "Do not add a contact suggestion, do not ask the visitor to leave their name or email, and do not mention LinkedIn or email unless the visitor explicitly asks for contact details."
+        else "Do not add a contact suggestion, do not ask the visitor to leave contact details, and do not mention LinkedIn unless the visitor explicitly asks for contact details."
     )
     payload = {
         "model": model,
@@ -380,11 +380,12 @@ def main():
         answer_lower = answer.lower()
         contact_markers = [
             "leave your name",
+            "leave a message",
+            "preferred contact",
             "rustam can contact you",
             "contact rustam",
             "contacted via linkedin",
             "via linkedin",
-            "via email",
         ]
         if any(marker in answer_lower for marker in contact_markers):
             contact_invitation_shown = True
