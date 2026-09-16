@@ -212,8 +212,9 @@
     {
       "title": "Personal Activities",
       "category": "Personal",
-      "summary": "Enjoys hiking, running, and playing football; also participates in Parkrun activities.",
-      "technologies": []
+      "summary": "Outside of work, Rustam enjoys hiking, running, and playing football. He also likes to run and participates in Parkrun activities.",
+      "technologies": ["Hiking", "Running", "Football", "Parkrun"],
+      "link": "https://www.parkrun.com.de/woehrdersee/parkrunner/10980035/"
     }
   ],
 

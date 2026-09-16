@@ -117,3 +117,16 @@ GitHub Pages portfolio -> link to deployed Streamlit app
 ```
 
 Deploy the Streamlit app on a backend-friendly service such as Streamlit Community Cloud, Render, Railway, or Hugging Face Spaces, and store `GROQ_API_KEY` as a secret there.
+
+## Keep Streamlit Awake
+
+This repo includes a GitHub Actions workflow at `.github/workflows/keep-streamlit-awake.yml` that pings `https://rustamdurdyyev.streamlit.app/` every 12 hours.
+
+If the deployed URL changes later, add the new app URL to GitHub:
+
+1. Open the GitHub repository.
+2. Go to `Settings` -> `Secrets and variables` -> `Actions`.
+3. Add a repository variable named `STREAMLIT_APP_URL`.
+4. Set its value to the new deployed Streamlit URL.
+
+You can also start it manually from the `Actions` tab with the `Keep Streamlit Awake` workflow.

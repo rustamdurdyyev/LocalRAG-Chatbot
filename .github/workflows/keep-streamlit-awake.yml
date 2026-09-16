@@ -1,0 +1,34 @@
+name: Keep Streamlit Awake
+
+on:
+  schedule:
+    # GitHub Actions cron uses UTC. This pings twice a day so the app
+    # is refreshed before typical idle sleep windows.
+    - cron: "0 */12 * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Ping deployed Streamlit app
+        env:
+          STREAMLIT_APP_URL: ${{ vars.STREAMLIT_APP_URL || secrets.STREAMLIT_APP_URL || 'https://rustamdurdyyev.streamlit.app/' }}
+        run: |
+          if [ -z "$STREAMLIT_APP_URL" ]; then
+            echo "Set STREAMLIT_APP_URL as a repository variable or secret."
+            exit 1
+          fi
+
+          curl --fail \
+            --location \
+            --silent \
+            --show-error \
+            --max-time 120 \
+            --retry 3 \
+            --retry-delay 20 \
+            --retry-all-errors \
+            --user-agent "GitHub-Actions-Streamlit-Keepalive" \
+            "$STREAMLIT_APP_URL"

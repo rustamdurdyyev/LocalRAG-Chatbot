@@ -12,6 +12,7 @@ GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 DEFAULT_MODEL = "openai/gpt-oss-20b"
 DEFAULT_CV_PATH = "cv.json"
 DEFAULT_CONTEXT_LIMIT = 6
+CONTACT_KEYWORDS = ["contact", "email", "linkedin", "reach", "message"]
 
 
 @dataclass
@@ -48,6 +49,18 @@ def build_knowledge_items(cv):
 
     personal_info = cv.get("personal_info", {})
     name = personal_info.get("full_name", "Rustam Durdyyev")
+    links = personal_info.get("links", {})
+
+    contact_lines = [f"Name: {name}"]
+    if personal_info.get("email"):
+        contact_lines.append(f"Email: {personal_info['email']}")
+    if links.get("linkedin"):
+        contact_lines.append(f"LinkedIn: {links['linkedin']}")
+    if links.get("website"):
+        contact_lines.append(f"Website: {links['website']}")
+    if links.get("github"):
+        contact_lines.append(f"GitHub: {links['github']}")
+    items.append(KnowledgeItem("contact", "\n".join(contact_lines)))
 
     summary = cv.get("professional_summary")
     if summary:
@@ -134,7 +147,12 @@ def normalize_words(text):
     return set(re.findall(r"[a-z0-9]+", text.lower()))
 
 
-def select_context_items(question, items, limit=DEFAULT_CONTEXT_LIMIT):
+def is_contact_request(question):
+    question_lower = question.lower()
+    return any(keyword in question_lower for keyword in CONTACT_KEYWORDS)
+
+
+def select_context_items(question, items, limit=DEFAULT_CONTEXT_LIMIT, include_contact=True):
     question_lower = question.lower()
     field_keywords = {
         "publication": ["publication", "paper", "article", "journal", "doi"],
@@ -154,14 +172,53 @@ def select_context_items(question, items, limit=DEFAULT_CONTEXT_LIMIT):
             "crop",
             "soccer",
             "football",
+            "hobby",
+            "hobbies",
             "manchester",
+            "run",
+            "runner",
             "running",
+            "record",
+            "records",
             "hiking",
             "parkrun",
+            "outside",
             "outside work",
             "personal",
         ],
+        "contact": CONTACT_KEYWORDS,
     }
+
+    def with_contact(selected_items):
+        selected = [
+            item for item in selected_items
+            if include_contact or item.item_type != "contact"
+        ]
+        if not include_contact:
+            return selected
+
+        selected_ids = {id(item) for item in selected}
+        for item in items:
+            if item.item_type == "contact" and id(item) not in selected_ids:
+                selected.append(item)
+        return selected
+
+    personal_activity_keywords = [
+        "outside work",
+        "outside of work",
+        "hobby",
+        "hobbies",
+        "hiking",
+        "run",
+        "runner",
+        "running",
+        "record",
+        "records",
+        "football",
+        "parkrun",
+    ]
+    if any(keyword in question_lower for keyword in personal_activity_keywords):
+        return with_contact([item for item in items if item.item_type == "portfolio_activity"])
 
     requested_types = [
         item_type
@@ -170,7 +227,7 @@ def select_context_items(question, items, limit=DEFAULT_CONTEXT_LIMIT):
     ]
 
     if requested_types:
-        return [item for item in items if item.item_type in requested_types]
+        return with_contact([item for item in items if item.item_type in requested_types])
 
     question_words = normalize_words(question)
     scored_items = []
@@ -180,13 +237,13 @@ def select_context_items(question, items, limit=DEFAULT_CONTEXT_LIMIT):
             scored_items.append((score, -index, item))
 
     if not scored_items:
-        return items[:limit]
+        return with_contact(items[:limit])
 
     scored_items.sort(reverse=True)
-    return [item for _, _, item in scored_items[:limit]]
+    return with_contact([item for _, _, item in scored_items[:limit]])
 
 
-def ask_groq(question, context, model=None):
+def ask_groq(question, context, model=None, allow_contact_invitation=True):
     api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
         raise RuntimeError(
@@ -195,6 +252,12 @@ def ask_groq(question, context, model=None):
         )
 
     model = model or os.getenv("GROQ_MODEL", DEFAULT_MODEL)
+    contact_invitation = (
+        "When you are giving a fallback because the detail is not in the CV data, you may add one short contact suggestion: "
+        "Rustam can be contacted via LinkedIn or email, or the visitor can leave their name and email here and Rustam can contact them."
+        if allow_contact_invitation
+        else "Do not add a contact suggestion, do not ask the visitor to leave their name or email, and do not mention LinkedIn or email unless the visitor explicitly asks for contact details."
+    )
     payload = {
         "model": model,
         "messages": [
@@ -203,7 +266,9 @@ def ask_groq(question, context, model=None):
                 "content": (
                     "You are DuRu, Rustam Durdyyev's personal assistant. "
                     "Answer using only the provided CV and portfolio context. "
-                    "If the context does not contain the answer, say that it is not listed in the CV data. "
+                    "If the context does not contain the answer, do not say 'I do not know' or invent details. "
+                    "Say that this detail is not listed in the CV data. "
+                    f"{contact_invitation} "
                     "Keep answers clear, friendly, and portfolio-ready."
                 ),
             },
@@ -279,23 +344,50 @@ def main():
     print("Ask me about his skills, education, publications, experience, projects, or activities.")
     print("Type q anytime to quit.")
 
+    contact_invitation_shown = False
+
     while True:
         question = input("\nHow can I help you? ").strip()
         if question.lower() == "q":
             print("Goodbye. DuRu is signing off.")
             break
 
-        context_items = select_context_items(question, items, limit=args.context_limit)
+        contact_request = is_contact_request(question)
+        allow_contact_suggestion = not contact_invitation_shown
+        include_contact = allow_contact_suggestion or contact_request
+        context_items = select_context_items(
+            question,
+            items,
+            limit=args.context_limit,
+            include_contact=include_contact,
+        )
         context = "\n\n".join(item.content for item in context_items)
 
         if args.show_context:
             print(f"\nSelected context:\n{context}")
 
         try:
-            answer = ask_groq(question, context, model=args.model)
+            answer = ask_groq(
+                question,
+                context,
+                model=args.model,
+                allow_contact_invitation=allow_contact_suggestion,
+            )
         except RuntimeError as error:
             print(f"\nError: {error}")
             sys.exit(1)
+
+        answer_lower = answer.lower()
+        contact_markers = [
+            "leave your name",
+            "rustam can contact you",
+            "contact rustam",
+            "contacted via linkedin",
+            "via linkedin",
+            "via email",
+        ]
+        if any(marker in answer_lower for marker in contact_markers):
+            contact_invitation_shown = True
 
         print(f"\nAnswer:\n{answer}")
 

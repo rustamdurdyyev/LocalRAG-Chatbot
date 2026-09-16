@@ -6,6 +6,7 @@ from groq_chat import (
     DEFAULT_MODEL,
     build_knowledge_items,
     ask_groq,
+    is_contact_request,
     load_cv,
     load_dotenv_file,
     select_context_items,
@@ -51,6 +52,9 @@ if "messages" not in st.session_state:
         }
     ]
 
+if "contact_invitation_shown" not in st.session_state:
+    st.session_state.contact_invitation_shown = False
+
 for message in st.session_state.messages:
     st.chat_message(message["role"]).write(message["content"])
 
@@ -60,7 +64,15 @@ if question:
     st.session_state.messages.append({"role": "user", "content": question})
     st.chat_message("user").write(question)
 
-    context_items = select_context_items(question, items, limit=context_limit)
+    contact_request = is_contact_request(question)
+    allow_contact_suggestion = not st.session_state.contact_invitation_shown
+    include_contact = allow_contact_suggestion or contact_request
+    context_items = select_context_items(
+        question,
+        items,
+        limit=context_limit,
+        include_contact=include_contact,
+    )
     context = "\n\n".join(item.content for item in context_items)
 
     if show_context:
@@ -70,10 +82,27 @@ if question:
     with st.chat_message("assistant"):
         with st.spinner("DuRu is thinking..."):
             try:
-                answer = ask_groq(question, context, model=model)
+                answer = ask_groq(
+                    question,
+                    context,
+                    model=model,
+                    allow_contact_invitation=allow_contact_suggestion,
+                )
             except RuntimeError as error:
                 answer = f"Error: {error}"
 
             st.write(answer)
+
+    answer_lower = answer.lower()
+    contact_markers = [
+        "leave your name",
+        "rustam can contact you",
+        "contact rustam",
+        "contacted via linkedin",
+        "via linkedin",
+        "via email",
+    ]
+    if any(marker in answer_lower for marker in contact_markers):
+        st.session_state.contact_invitation_shown = True
 
     st.session_state.messages.append({"role": "assistant", "content": answer})

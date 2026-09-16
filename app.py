@@ -22,6 +22,20 @@ with open("cv.json", "r", encoding="utf-8") as f:
 documents = []
 ids = []
 
+personal_info = cv.get("personal_info", {})
+links = personal_info.get("links", {})
+contact_lines = [f"Name: {personal_info.get('full_name', 'Rustam Durdyyev')}"]
+if personal_info.get("email"):
+    contact_lines.append(f"Email: {personal_info['email']}")
+if links.get("linkedin"):
+    contact_lines.append(f"LinkedIn: {links['linkedin']}")
+if links.get("website"):
+    contact_lines.append(f"Website: {links['website']}")
+if links.get("github"):
+    contact_lines.append(f"GitHub: {links['github']}")
+documents.append(Document(page_content="\n".join(contact_lines), metadata={"type": "contact"}, id="contact"))
+ids.append("contact")
+
 documents.append(Document(
     page_content=cv["professional_summary"],
     metadata={"type": "summary"},
@@ -81,6 +95,27 @@ for i, lang in enumerate(cv.get("languages", [])):
     documents.append(Document(page_content=lang_text, metadata={"type": "language"}, id=f"language_{i}"))
     ids.append(f"language_{i}")
 
+for i, activity in enumerate(cv.get("portfolio_activities", [])):
+    activity_lines = [
+        f"Title: {activity.get('title', '')}",
+        f"Category: {activity.get('category', '')}",
+        f"Summary: {activity.get('summary', '')}",
+    ]
+    technologies = activity.get("technologies", [])
+    if technologies:
+        activity_lines.append(f"Technologies: {', '.join(technologies)}")
+    if activity.get("link"):
+        activity_lines.append(f"Link: {activity['link']}")
+
+    documents.append(
+        Document(
+            page_content="\n".join(activity_lines).strip(),
+            metadata={"type": "portfolio_activity"},
+            id=f"portfolio_activity_{i}",
+        )
+    )
+    ids.append(f"portfolio_activity_{i}")
+
 # ============================================================
 # 3. Vector Store (persistent)
 # ============================================================
@@ -112,8 +147,16 @@ retriever = vector_store.as_retriever(search_kwargs={"k": 6})
 # ============================================================
 # 4. Helper
 # ============================================================
+CONTACT_KEYWORDS = ["contact", "email", "linkedin", "reach", "message"]
+
+
 def get_all_items(doc_type: str):
     return [doc.page_content for doc in documents if doc.metadata.get("type") == doc_type]
+
+
+def is_contact_request(question: str):
+    question_lower = question.lower()
+    return any(keyword in question_lower for keyword in CONTACT_KEYWORDS)
 
 # ============================================================
 # 5. LLM + Template (strict extraction)
@@ -142,6 +185,10 @@ If the user asks about, refers to, or indirectly mentions any of the following f
 7. If multiple fields are mentioned, list all items from each field.
 8. If you choose to mention a field yourself, you must also list **all items** from that field.
 
+If the context does not contain the answer, do not say "I do not know" and do not invent details.
+Say that this detail is not listed in the CV data.
+{contact_invitation}
+
 Context:
 {context}
 
@@ -161,6 +208,9 @@ chain = prompt | model
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+if "contact_invitation_shown" not in st.session_state:
+    st.session_state.contact_invitation_shown = False
+
 for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg["content"])
 
@@ -171,6 +221,9 @@ if question:
     st.chat_message("user").write(question)
 
     q_lower = question.lower()
+    contact_request = is_contact_request(question)
+    allow_contact_suggestion = not st.session_state.contact_invitation_shown
+    include_contact = allow_contact_suggestion or contact_request
 
     # FIELD DETECTION
     if "publication" in q_lower or "paper" in q_lower or "article" in q_lower:
@@ -182,11 +235,31 @@ if question:
     elif "language" in q_lower:
         context_docs = get_all_items("language")
 
+    elif contact_request:
+        context_docs = get_all_items("contact")
+
     elif "education" in q_lower or "study" in q_lower or "degree" in q_lower:
         context_docs = get_all_items("education")
 
-    elif "experience" in q_lower or "work" in q_lower or "career" in q_lower:
+    elif "experience" in q_lower or ("work" in q_lower and "outside" not in q_lower) or "career" in q_lower:
         context_docs = get_all_items("experience")
+
+    elif (
+        "activity" in q_lower
+        or "activities" in q_lower
+        or "hobby" in q_lower
+        or "hobbies" in q_lower
+        or "outside" in q_lower
+        or "outside work" in q_lower
+        or "hiking" in q_lower
+        or "run" in q_lower
+        or "runner" in q_lower
+        or "running" in q_lower
+        or "record" in q_lower
+        or "football" in q_lower
+        or "parkrun" in q_lower
+    ):
+        context_docs = get_all_items("portfolio_activity")
 
     elif "rustam" in q_lower or "about him" in q_lower or "who is he" in q_lower:
         # GENERAL BIO → include EVERYTHING
@@ -197,6 +270,7 @@ if question:
             + get_all_items("publication")
             + get_all_items("language")
             + get_all_items("skills")
+            + get_all_items("portfolio_activity")
         )
 
     else:
@@ -204,9 +278,39 @@ if question:
         docs = retriever.vectorstore.similarity_search(query=question, k=6)
         context_docs = [d.page_content for d in docs]
 
+    if include_contact:
+        for contact_doc in get_all_items("contact"):
+            if contact_doc not in context_docs:
+                context_docs.append(contact_doc)
+
     full_context = "\n\n".join(context_docs)
 
-    answer = chain.invoke({"context": full_context, "question": question})
+    contact_invitation = (
+        "When you are giving a fallback because the detail is not in the CV data, you may add one short contact suggestion: "
+        "Rustam can be contacted via LinkedIn or email, or the visitor can leave their name and email here and Rustam can contact them."
+        if allow_contact_suggestion
+        else "Do not add a contact suggestion, do not ask the visitor to leave their name or email, and do not mention LinkedIn or email unless the visitor explicitly asks for contact details."
+    )
+
+    answer = chain.invoke(
+        {
+            "context": full_context,
+            "question": question,
+            "contact_invitation": contact_invitation,
+        }
+    )
+
+    answer_lower = answer.lower()
+    contact_markers = [
+        "leave your name",
+        "rustam can contact you",
+        "contact rustam",
+        "contacted via linkedin",
+        "via linkedin",
+        "via email",
+    ]
+    if any(marker in answer_lower for marker in contact_markers):
+        st.session_state.contact_invitation_shown = True
 
     st.session_state.messages.append({"role": "assistant", "content": answer})
     st.chat_message("assistant").write(answer)
