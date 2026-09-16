@@ -1,4 +1,5 @@
 import os
+import inspect
 
 import streamlit as st
 
@@ -6,11 +7,44 @@ from groq_chat import (
     DEFAULT_MODEL,
     build_knowledge_items,
     ask_groq,
-    is_contact_request,
     load_cv,
     load_dotenv_file,
     select_context_items,
 )
+
+
+CONTACT_KEYWORDS = ["contact", "email", "linkedin", "reach", "message"]
+
+
+def is_contact_request(question):
+    question_lower = question.lower()
+    return any(keyword in question_lower for keyword in CONTACT_KEYWORDS)
+
+
+def select_context_items_compatible(question, items, limit, include_contact):
+    parameters = inspect.signature(select_context_items).parameters
+    if "include_contact" in parameters:
+        return select_context_items(
+            question,
+            items,
+            limit=limit,
+            include_contact=include_contact,
+        )
+
+    return select_context_items(question, items, limit=limit)
+
+
+def ask_groq_compatible(question, context, model, allow_contact_invitation):
+    parameters = inspect.signature(ask_groq).parameters
+    if "allow_contact_invitation" in parameters:
+        return ask_groq(
+            question,
+            context,
+            model=model,
+            allow_contact_invitation=allow_contact_invitation,
+        )
+
+    return ask_groq(question, context, model=model)
 
 
 def load_streamlit_secret():
@@ -67,7 +101,7 @@ if question:
     contact_request = is_contact_request(question)
     allow_contact_suggestion = not st.session_state.contact_invitation_shown
     include_contact = allow_contact_suggestion or contact_request
-    context_items = select_context_items(
+    context_items = select_context_items_compatible(
         question,
         items,
         limit=context_limit,
@@ -82,7 +116,7 @@ if question:
     with st.chat_message("assistant"):
         with st.spinner("DuRu is thinking..."):
             try:
-                answer = ask_groq(
+                answer = ask_groq_compatible(
                     question,
                     context,
                     model=model,
