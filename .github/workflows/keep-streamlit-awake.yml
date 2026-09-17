@@ -22,8 +22,18 @@ jobs:
             exit 1
           fi
 
+          APP_URL="${STREAMLIT_APP_URL%/}"
+          case "$APP_URL" in
+            */_stcore/health)
+              HEALTHCHECK_URL="$APP_URL"
+              ;;
+            *)
+              HEALTHCHECK_URL="$APP_URL/_stcore/health"
+              ;;
+          esac
+
+          echo "Pinging $HEALTHCHECK_URL"
           curl --fail \
-            --location \
             --silent \
             --show-error \
             --max-time 120 \
@@ -31,4 +41,4 @@ jobs:
             --retry-delay 20 \
             --retry-all-errors \
             --user-agent "GitHub-Actions-Streamlit-Keepalive" \
-            "$STREAMLIT_APP_URL"
+            "$HEALTHCHECK_URL"
