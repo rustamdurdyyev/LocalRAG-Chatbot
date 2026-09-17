@@ -1,8 +1,10 @@
 import os
 import inspect
+import uuid
 
 import streamlit as st
 
+from chat_logging import log_chat_interaction
 from groq_chat import (
     DEFAULT_MODEL,
     build_knowledge_items,
@@ -14,6 +16,18 @@ from groq_chat import (
 
 
 CONTACT_KEYWORDS = ["contact", "email", "linkedin", "reach", "message"]
+STREAMLIT_SECRET_KEYS = [
+    "GROQ_API_KEY",
+    "GROQ_MODEL",
+    "DURU_CONTEXT_LIMIT",
+    "DURU_SHOW_CONTEXT",
+    "SUPABASE_URL",
+    "SUPABASE_SECRET_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_KEY",
+    "SUPABASE_PUBLISHABLE_KEY",
+    "SUPABASE_ANON_KEY",
+]
 
 
 def is_contact_request(question):
@@ -47,23 +61,24 @@ def ask_groq_compatible(question, context, model, allow_contact_invitation):
     return ask_groq(question, context, model=model)
 
 
-def load_streamlit_secret():
-    if os.getenv("GROQ_API_KEY"):
-        return
+def load_streamlit_secrets():
+    for key in STREAMLIT_SECRET_KEYS:
+        if os.getenv(key):
+            continue
 
-    try:
-        api_key = st.secrets.get("GROQ_API_KEY")
-    except Exception:
-        api_key = None
+        try:
+            value = st.secrets.get(key)
+        except Exception:
+            value = None
 
-    if api_key:
-        os.environ["GROQ_API_KEY"] = api_key
+        if value:
+            os.environ[key] = str(value)
 
 
 st.set_page_config(page_title="Ask DuRu", layout="centered")
 
 load_dotenv_file()
-load_streamlit_secret()
+load_streamlit_secrets()
 
 items = build_knowledge_items(load_cv())
 
@@ -88,6 +103,9 @@ if "messages" not in st.session_state:
 
 if "contact_invitation_shown" not in st.session_state:
     st.session_state.contact_invitation_shown = False
+
+if "session_id" not in st.session_state:
+    st.session_state.session_id = str(uuid.uuid4())
 
 for message in st.session_state.messages:
     st.chat_message(message["role"]).write(message["content"])
@@ -139,5 +157,13 @@ if question:
     ]
     if any(marker in answer_lower for marker in contact_markers):
         st.session_state.contact_invitation_shown = True
+
+    log_chat_interaction(
+        session_id=st.session_state.session_id,
+        question=question,
+        answer=answer,
+        model=model,
+        source="streamlit-groq",
+    )
 
     st.session_state.messages.append({"role": "assistant", "content": answer})
