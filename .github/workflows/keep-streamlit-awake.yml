@@ -33,7 +33,14 @@ jobs:
           esac
 
           echo "Pinging $HEALTHCHECK_URL"
+          COOKIE_JAR="$(mktemp)"
+          trap 'rm -f "$COOKIE_JAR"' EXIT
+
           curl --fail \
+            --location \
+            --max-redirs 10 \
+            --cookie-jar "$COOKIE_JAR" \
+            --cookie "$COOKIE_JAR" \
             --silent \
             --show-error \
             --max-time 120 \
